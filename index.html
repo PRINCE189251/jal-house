@@ -904,34 +904,33 @@
     }, 500);
 
     // WATER PROBLEMS
-    const waterProblems = [
-        {titleEn:"🏜️ Groundwater Depletion Crisis", titleHi:"🏜️ भूजल कमी संकट", descEn:"India extracts more groundwater than US & China combined. Punjab, Rajasthan, Delhi water tables falling 1-2 meters annually. 78% wells over-exploited. NITI Aayog warns 21 cities will run out of groundwater by 2030.", descHi:"भारत अमेरिका और चीन से अधिक भूजल निकालता है। पंजाब, राजस्थान, दिल्ली में जल स्तर सालाना 1-2 मीटर गिर रहा है। 78% कुएं अत्यधिक दोहन। नीति आयोग ने चेतावनी दी है कि 2030 तक 21 शहरों का भूजल खत्म हो जाएगा।", img:"https://images.pexels.com/photos/2417366/pexels-photo-2417366.jpeg?w=800&h=500&auto=compress"},
-        {titleEn:"🌊 River Pollution (Ganga & Yamuna)", titleHi:"🌊 नदी प्रदूषण (गंगा और यमुना)", descEn:"Every day 3,000 million litres of untreated sewage flows into Ganga. Yamuna in Delhi is 90% sewage with toxic foam. Industrial effluents contain chromium, lead, mercury. BOD reduced from 8.2 to 5.4 but still critical.", descHi:"हर दिन 3,000 मिलियन लीटर अनुपचारित सीवेज गंगा में बहता है। दिल्ली में यमुना 90% सीवेज है जिसमें जहरीला झाग है। औद्योगिक अपशिष्ट में क्रोमियम, सीसा, पारा होता है। BOD 8.2 से घटकर 5.4 हुआ लेकिन फिर भी गंभीर है।", img:"https://images.pexels.com/photos/11600998/pexels-photo-11600998.jpeg?w=800&h=500&auto=compress"},
-        {titleEn:"🤒 Waterborne Diseases Epidemic", titleHi:"🤒 जलजनित रोग महामारी", descEn:"70% of India's surface water is unfit for drinking. Over 2 lakh children die annually from waterborne diseases like diarrhea, typhoid, hepatitis A, and cholera. 38 crore Indians lack access to proper sanitation.", descHi:"भारत का 70% सतही पानी पीने योग्य नहीं है। 2 लाख से अधिक बच्चे प्रतिवर्ष जलजनित रोगों से मरते हैं। 38 करोड़ भारतीयों के पास उचित स्वच्छता की सुविधा नहीं है।", img:"https://images.pexels.com/photos/4040659/pexels-photo-4040659.jpeg?w=800&h=500&auto=compress"},
-        {titleEn:"🏞️ Drying Rivers and Depleted Flows", titleHi:"🏞️ सूखती नदियाँ और घटता प्रवाह", descEn:"Ganga's dry-season flow reduced by 40% due to dams, excessive extraction, and climate change. Yamuna almost vanishes after Tajewala barrage. Godavari, Krishna, Kaveri also show reduced flows, threatening irrigation for millions.", descHi:"बांधों, अत्यधिक निष्कर्षण और जलवायु परिवर्तन के कारण गंगा का सूखा मौसम प्रवाह 40% कम हो गया। ताजेवाला बैराज के बाद यमुना लगभग गायब हो जाती है। गोदावरी, कृष्णा, कावेरी का प्रवाह भी कम हो गया है, जिससे लाखों किसानों की सिंचाई खतरे में है।", img:"https://images.pexels.com/photos/8217127/pexels-photo-8217127.jpeg?w=800&h=500&auto=compress"},
-        {titleEn:"🏙️ Vanishing Lakes (Bengaluru, Kashmir & More)", titleHi:"🏙️ लुप्त होती झीलें (बेंगलुरु, कश्मीर और अन्य)", descEn:"Bengaluru lost 80% of its lakes in 4 decades due to urbanization and sewage dumping. Dal Lake in Srinagar area reduced by 50% with water quality severely deteriorated. Wetlands across India are under threat from encroachment.", descHi:"बेंगलुरु ने शहरीकरण और सीवेज डंपिंग के कारण 4 दशकों में अपनी 80% झीलें खो दीं। श्रीनगर में डल झील का क्षेत्रफल 50% कम हो गया और पानी की गुणवत्ता गंभीर रूप से खराब हो गई। पूरे भारत में आर्द्रभूमि अतिक्रमण से खतरे में है।", img:"https://images.pexels.com/photos/580617/pexels-photo-580617.jpeg?w=800&h=500&auto=compress"}
-    ];
+  const waterProblems = [
+    {titleEn:"🏜️ Groundwater Depletion Crisis", titleHi:"🏜️ भूजल कमी संकट", descEn:"India extracts more groundwater than US & China combined. Punjab, Rajasthan, Delhi water tables falling 1-2 meters annually. 78% wells over-exploited. NITI Aayog warns 21 cities will run out of groundwater by 2030.", descHi:"भारत अमेरिका और चीन से अधिक भूजल निकालता है। पंजाब, राजस्थान, दिल्ली में जल स्तर सालाना 1-2 मीटर गिर रहा है। 78% कुएं अत्यधिक दोहन। नीति आयोग ने चेतावनी दी है कि 2030 तक 21 शहरों का भूजल खत्म हो जाएगा।"},
+    {titleEn:"🌊 River Pollution (Ganga & Yamuna)", titleHi:"🌊 नदी प्रदूषण (गंगा और यमुना)", descEn:"Every day 3,000 million litres of untreated sewage flows into Ganga. Yamuna in Delhi is 90% sewage with toxic foam. Industrial effluents contain chromium, lead, mercury. BOD reduced from 8.2 to 5.4 but still critical.", descHi:"हर दिन 3,000 मिलियन लीटर अनुपचारित सीवेज गंगा में बहता है। दिल्ली में यमुना 90% सीवेज है जिसमें जहरीला झाग है। औद्योगिक अपशिष्ट में क्रोमियम, सीसा, पारा होता है। BOD 8.2 से घटकर 5.4 हुआ लेकिन फिर भी गंभीर है।"},
+    {titleEn:"🤒 Waterborne Diseases Epidemic", titleHi:"🤒 जलजनित रोग महामारी", descEn:"70% of India's surface water is unfit for drinking. Over 2 lakh children die annually from waterborne diseases like diarrhea, typhoid, hepatitis A, and cholera. 38 crore Indians lack access to proper sanitation.", descHi:"भारत का 70% सतही पानी पीने योग्य नहीं है। 2 लाख से अधिक बच्चे प्रतिवर्ष जलजनित रोगों से मरते हैं। 38 करोड़ भारतीयों के पास उचित स्वच्छता की सुविधा नहीं है।"},
+    {titleEn:"🏞️ Drying Rivers and Depleted Flows", titleHi:"🏞️ सूखती नदियाँ और घटता प्रवाह", descEn:"Ganga's dry-season flow reduced by 40% due to dams, excessive extraction, and climate change. Yamuna almost vanishes after Tajewala barrage. Godavari, Krishna, Kaveri also show reduced flows, threatening irrigation for millions.", descHi:"बांधों, अत्यधिक निष्कर्षण और जलवायु परिवर्तन के कारण गंगा का सूखा मौसम प्रवाह 40% कम हो गया। ताजेवाला बैराज के बाद यमुना लगभग गायब हो जाती है। गोदावरी, कृष्णा, कावेरी का प्रवाह भी कम हो गया है, जिससे लाखों किसानों की सिंचाई खतरे में है।"},
+    {titleEn:"🏙️ Vanishing Lakes (Bengaluru, Kashmir & More)", titleHi:"🏙️ लुप्त होती झीलें (बेंगलुरु, कश्मीर और अन्य)", descEn:"Bengaluru lost 80% of its lakes in 4 decades due to urbanization and sewage dumping. Dal Lake in Srinagar area reduced by 50% with water quality severely deteriorated. Wetlands across India are under threat from encroachment.", descHi:"बेंगलुरु ने शहरीकरण और सीवेज डंपिंग के कारण 4 दशकों में अपनी 80% झीलें खो दीं। श्रीनगर में डल झील का क्षेत्रफल 50% कम हो गया और पानी की गुणवत्ता गंभीर रूप से खराब हो गई। पूरे भारत में आर्द्रभूमि अतिक्रमण से खतरे में है।"}
+];
     
-    const problemGrid = document.getElementById('problemGrid');
-    if(problemGrid) {
-        problemGrid.innerHTML = waterProblems.map(p => `
-            <div class="problem-card">
-                <div class="problem-img-wrapper"><img class="problem-img" src="${p.img}" loading="lazy" onerror="this.src='https://picsum.photos/id/104/800/500'"></div>
-                <div class="problem-content">
-                    <h3><span data-lang="en">${p.titleEn}</span><span data-lang="hi">${p.titleHi}</span></h3>
-                    <p><span data-lang="en">${p.descEn}</span><span data-lang="hi">${p.descHi}</span></p>
-                    <div class="solution-badge">💡 <span data-lang="en">Solutions</span><span data-lang="hi">समाधान</span></div>
-                    <ul class="solution-list">
-                        <li><span data-lang="en">Rainwater harvesting & artificial recharge</span><span data-lang="hi">वर्षा जल संचयन और कृत्रिम रिचार्ज</span></li>
-                        <li><span data-lang="en">Sewage treatment plants (STPs) at community level</span><span data-lang="hi">समुदाय स्तर पर सीवेज उपचार संयंत्र (STP)</span></li>
-                        <li><span data-lang="en">River cleaning drives & afforestation along banks</span><span data-lang="hi">नदी सफाई अभियान और किनारों पर वनीकरण</span></li>
-                        <li><span data-lang="en">Lake rejuvenation & wetland conservation</span><span data-lang="hi">झील कायाकल्प और आर्द्रभूमि संरक्षण</span></li>
-                        <li><span data-lang="en">Strict industrial compliance with Zero Liquid Discharge</span><span data-lang="hi">शून्य तरल निर्वहन के साथ सख्त औद्योगिक अनुपालन</span></li>
-                    </ul>
-                </div>
+const problemGrid = document.getElementById('problemGrid');
+if(problemGrid) {
+    problemGrid.innerHTML = waterProblems.map(p => `
+        <div class="problem-card">
+            <div class="problem-content">
+                <h3><span data-lang="en">${p.titleEn}</span><span data-lang="hi">${p.titleHi}</span></h3>
+                <p><span data-lang="en">${p.descEn}</span><span data-lang="hi">${p.descHi}</span></p>
+                <div class="solution-badge">💡 <span data-lang="en">Solutions</span><span data-lang="hi">समाधान</span></div>
+                <ul class="solution-list">
+                    <li><span data-lang="en">Rainwater harvesting & artificial recharge</span><span data-lang="hi">वर्षा जल संचयन और कृत्रिम रिचार्ज</span></li>
+                    <li><span data-lang="en">Sewage treatment plants (STPs) at community level</span><span data-lang="hi">समुदाय स्तर पर सीवेज उपचार संयंत्र (STP)</span></li>
+                    <li><span data-lang="en">River cleaning drives & afforestation along banks</span><span data-lang="hi">नदी सफाई अभियान और किनारों पर वनीकरण</span></li>
+                    <li><span data-lang="en">Lake rejuvenation & wetland conservation</span><span data-lang="hi">झील कायाकल्प और आर्द्रभूमि संरक्षण</span></li>
+                    <li><span data-lang="en">Strict industrial compliance with Zero Liquid Discharge</span><span data-lang="hi">शून्य तरल निर्वहन के साथ सख्त औद्योगिक अनुपालन</span></li>
+                </ul>
             </div>
-        `).join('');
-    }
+        </div>
+    `).join('');
+}
 
     // SOLUTIONS DATA (10 Solutions)
     const solutionsArray = [
