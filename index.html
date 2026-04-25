@@ -877,7 +877,7 @@
     if (menuIcon && navLinksMenu) menuIcon.addEventListener('click', function() { navLinksMenu.classList.toggle('active'); });
 
     // Page Navigation
-    const pages = ['home', 'about', 'india-projects', 'problems', 'solutions', 'calculator', 'tips', 'faq', 'contact'];
+    const pages = ['home', 'about', 'india-projects', 'problems', 'solutions','wetland', 'calculator', 'tips', 'faq', 'contact'];
     function showPage(pageId) {
         for (let i = 0; i < pages.length; i++) { const el = document.getElementById(pages[i] + '-page'); if (el) el.classList.add('hidden-page'); }
         const activePage = document.getElementById(pageId + '-page'); if (activePage) activePage.classList.remove('hidden-page');
