@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="hi-IN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaGuard | विद्याग्यान जल हाउस | Water Conservation Mission</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0d6efd;
+            --primary-dark: #0b5ed7;
+            --secondary: #20c997;
+            --secondary-dark: #198754;
+            --accent: #ffc107;
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --text-dark: #212529;
+            --text-muted: #6c757d;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --border-light: #e9ecef;
+            --success: #28a745;
+            --warning: #fd7e14;
+            --danger: #dc3545;
+        }
+
+        body.dark {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #14b8a6;
+            --secondary-dark: #0d9488;
+            --accent: #fbbf24;
+            --bg-light: #0f172a;
+            --bg-white: #1e293b;
+            --text-dark: #f1f5f9;
+            --text-muted: #94a3b8;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            --border-light: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* LOADING SCREEN - VIDYAGYAN JAL HOUSE TAGDA PROMPT */
+        .loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0d6efd, #20c997, #0f172a, #0b5ed7);
+            background-size: 400% 400%;
+            animation: gradientBG 3s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.6s ease;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .loader {
+            text-align: center;
+            max-width: 90%;
+            padding: 40px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 60px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .water-icon {
+            font-size: 100px;
+            color: white;
+            animation: waterDrop 1.2s ease-in-out infinite;
+            display: inline-block;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.5));
+        }
+        
+        @keyframes waterDrop {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
+        }
+        
+        .ripple-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+        }
+        
+        .ripple {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            animation: ripple 1.5s infinite;
+        }
+        
+        .ripple:nth-child(2) { animation-delay: 0.5s; }
+        .ripple:nth-child(3) { animation-delay: 1s; }
+        
+        @keyframes ripple {
+            0% { width: 0; height: 0; opacity: 1; }
+            100% { width: 200px; height: 200px; opacity: 0; }
+        }
+        
+        .loader-text {
+            margin-top: 30px;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            animation: pulse 1s infinite;
+        }
+        
+        .vidyagyan-loader {
+            margin-top: 25px;
+            padding: 15px 25px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50px;
+            display: inline-block;
+        }
+        
+        .vidyagyan-loader span {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffc107;
+        }
+        
+        .loader-quote {
+            margin-top: 20px;
+            font-style: italic;
+            font-size: 16px;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .loader-percent {
+            font-size: 55px;
+            font-weight: 800;
+            color: white;
+            margin-top: 20px;
+            text-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        
+        .loader-bar {
+            width: 320px;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            margin-top: 25px;
+            overflow: hidden;
+        }
+        
+        .loader-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ffc107, #ffffff);
+            border-radius: 10px;
+            transition: width 0.1s;
+        }
+
+        .main-content {
+            display: none;
+        }
+        
+        .main-content.visible {
+            display: block;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Buttons */
+        .dark-toggle, .lang-toggle {
+            position: fixed;
+            width: 52px;
+            height: 52px;
+            background: var(--bg-white);
+            color: var(--primary);
+            border: 1px solid var(--border-light);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 22px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .dark-toggle { bottom: 100px; right: 25px; }
+        .lang-toggle { bottom: 165px; right: 25px; }
+        
+        .dark-toggle:hover, .lang-toggle:hover { transform: scale(1.1); background: var(--primary); color: white; }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 35px;
+            right: 25px;
+            width: 52px;
+            height: 52px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 22px;
+            display: none;
+            transition: all 0.3s;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .back-to-top:hover { background: var(--primary-dark); transform: translateY(-3px); }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--bg-white);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            cursor: pointer;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 28px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        
+        .nav-links a:hover { color: var(--primary); }
+        .nav-links a.active-nav { color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 4px; }
+        
+        .menu-icon { display: none; font-size: 28px; cursor: pointer; color: var(--text-dark); }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 140px 20px 100px;
+            background: linear-gradient(135deg, rgba(13,110,253,0.9), rgba(32,201,151,0.85)), url('https://images.pexels.com/photos/466675/pexels-photo-466675.jpeg?w=1600&h=900&auto=compress');
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+        
+        .hero h1 { font-size: 68px; margin-bottom: 25px; }
+        .hero .highlight { color: var(--accent); }
+        .hero p { font-size: 22px; max-width: 800px; margin: 0 auto 35px; opacity: 0.95; line-height: 1.4; }
+        
+        .btn {
+            padding: 14px 38px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            margin: 5px;
+        }
+        
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: var(--card-shadow); background: var(--primary-dark); }
+        .btn-outline { background: transparent; border: 2px solid white; color: white; }
+        .btn-outline:hover { background: white; color: var(--primary); transform: translateY(-3px); }
+        
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 30px; }
+        section { padding: 90px 0; }
+        .section-title { text-align: center; font-size: 44px; margin-bottom: 20px; }
+        .section-subtitle { text-align: center; font-size: 18px; color: var(--text-muted); margin-bottom: 55px; max-width: 800px; margin-left: auto; margin-right: auto; }
+        
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; }
+        .card { background: var(--bg-white); padding: 32px; border-radius: 24px; box-shadow: var(--card-shadow); transition: all 0.3s; text-align: center; border: 1px solid var(--border-light); }
+        .card:hover { transform: translateY(-10px); }
+        .card i { font-size: 55px; color: var(--primary); margin-bottom: 20px; display: inline-block; }
+        .card h3 { margin-bottom: 15px; font-size: 24px; }
+        .card p { color: var(--text-muted); line-height: 1.6; }
+        
+        .india-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin: 50px 0; }
+        .india-card { background: var(--bg-white); padding: 28px; border-radius: 24px; text-align: center; box-shadow: var(--card-shadow); border-left: 5px solid var(--primary); border-bottom: 1px solid var(--border-light); }
+        .india-card h2 { font-size: 44px; color: var(--primary); margin-bottom: 8px; }
+        
+        .project-card { background: var(--bg-white); padding: 28px; border-radius: 20px; box-shadow: var(--card-shadow); transition: 0.3s; border: 1px solid var(--border-light); }
+        .project-card:hover { transform: translateY(-6px); }
+        .budget-bar { height: 12px; background: var(--border-light); border-radius: 10px; margin: 18px 0; overflow: hidden; }
+        .budget-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 10px; width: 0%; }
+        
+        .problem-card {
+            background: var(--bg-white);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 35px;
+            transition: transform 0.25s ease;
+            border: 1px solid var(--border-light);
+        }
+        .problem-card:hover { transform: translateY(-8px); }
+        .problem-img-wrapper {
+            flex: 1.2;
+            min-width: 300px;
+            background: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .problem-img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+        .problem-content { flex: 2.2; padding: 35px; }
+        .solution-badge { display: inline-block; background: var(--success); color: white; padding: 6px 20px; border-radius: 40px; font-size: 14px; margin: 15px 0 12px 0; font-weight: 600; }
+        .solution-list { list-style: none; margin-top: 15px; }
+        .solution-list li { padding: 10px 0; padding-left: 32px; position: relative; color: var(--text-muted); line-height: 1.5; }
+        .solution-list li:before { content: "💧"; position: absolute; left: 0; font-size: 18px; }
+        
+        .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px; }
+        .tip-card { background: var(--bg-white); padding: 28px; border-radius: 20px; box-shadow: var(--card-shadow); transition: all 0.3s; text-align: center; border: 1px solid var(--border-light); }
+        .tip-card i { font-size: 48px; margin-bottom: 15px; display: inline-block; }
+        .tip-card p { margin-top: 12px; line-height: 1.6; color: var(--text-muted); }
+        
+        .calculator { background: var(--bg-white); padding: 40px; border-radius: 28px; box-shadow: var(--card-shadow); max-width: 650px; margin: 0 auto; border: 1px solid var(--border-light); }
+        .input-group { margin-bottom: 22px; }
+        .input-group label { display: block; margin-bottom: 10px; font-weight: 600; color: var(--text-dark); font-size: 16px; }
+        .input-group input { width: 100%; padding: 14px; border: 1px solid var(--border-light); border-radius: 14px; font-size: 16px; background: var(--bg-light); color: var(--text-dark); }
+        .result { margin-top: 25px; padding: 25px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-radius: 20px; text-align: center; line-height: 1.5; }
+        
+        .faq-grid { max-width: 1000px; margin: 0 auto; }
+        .faq-item { background: var(--bg-white); margin-bottom: 18px; border-radius: 18px; overflow: hidden; box-shadow: var(--card-shadow); border: 1px solid var(--border-light); }
+        .faq-question { padding: 22px 28px; font-size: 18px; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; background: var(--bg-white); color: var(--text-dark); border-bottom: 1px solid transparent; transition: 0.3s; }
+        .faq-question:hover { background: var(--bg-light); }
+        .faq-answer { padding: 0 28px; max-height: 0; overflow: hidden; transition: max-height 0.5s ease; line-height: 1.7; color: var(--text-muted); }
+        .faq-item.active .faq-question { border-bottom-color: var(--primary); color: var(--primary); }
+        .faq-item.active .faq-answer { padding: 22px 28px; max-height: 600px; }
+        
+        .footer { background: var(--bg-white); color: var(--text-dark); padding: 60px 0 30px; margin-top: 70px; border-top: 1px solid var(--border-light); }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 45px; }
+        .footer-links { list-style: none; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; cursor: pointer; transition: 0.3s; line-height: 2.2; }
+        .footer-links a:hover { color: var(--primary); }
+        
+        .vidyagyan-box {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+            padding: 35px;
+            border-radius: 30px;
+            margin: 50px auto;
+            max-width: 700px;
+            box-shadow: var(--card-shadow);
+        }
+        .vidyagyan-box h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        .vidyagyan-box p {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 10px;
+        }
+        
+        .stats-table {
+            background: var(--bg-white);
+            border-radius: 24px;
+            padding: 30px;
+            margin: 40px 0;
+            border: 1px solid var(--border-light);
+        }
+        .stats-table h3 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 28px;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-light);
+            flex-wrap: wrap;
+        }
+        .stat-label { font-weight: 700; font-size: 18px; }
+        .stat-value { color: var(--primary); font-weight: 800; font-size: 18px; }
+        
+        @media (max-width: 768px) {
+            .menu-icon { display: block; }
+            .nav-links { position: fixed; left: -100%; top: 68px; flex-direction: column; background: var(--bg-white); width: 100%; text-align: center; padding: 30px; transition: 0.3s; z-index: 999; gap: 20px; border-bottom: 1px solid var(--border-light); }
+            .nav-links.active { left: 0; }
+            .hero h1 { font-size: 38px; }
+            .problem-img-wrapper { min-width: 100%; max-height: 220px; }
+            .section-title { font-size: 32px; }
+            .dark-toggle, .lang-toggle { right: 15px; }
+            .dark-toggle { bottom: 80px; }
+            .lang-toggle { bottom: 145px; }
+            .back-to-top { right: 15px; }
+            .loader-text { font-size: 18px; }
+            .loader-percent { font-size: 36px; }
+        }
+        
+        .page { display: block; }
+        .page.hidden-page { display: none; }
+        
+        [data-lang="hi"] { display: none; }
+        body.hindi [data-lang="en"] { display: none; }
+        body.hindi [data-lang="hi"] { display: block; }
+    </style>
+</head>
+<body>
+
+<!-- LOADING SCREEN - TAGDA VIDYAGYAN JAL HOUSE PROMPT -->
+<div class="loader-wrapper" id="loaderWrapper">
+    <div class="loader">
+        <div class="ripple-container">
+            <div class="ripple"></div>
+            <div class="ripple"></div>
+            <div class="ripple"></div>
+            <div class="water-icon">💧</div>
+        </div>
+        <div class="loader-text" data-lang="en">AQUAGUARD</div>
+        <div class="loader-text" data-lang="hi">अक्वागार्ड</div>
+        
+        <div class="vidyagyan-loader">
+            <span>🌟 विद्याग्यान जल हाउस 🌟</span>
+        </div>
+        <div class="loader-quote" data-lang="en">"जल है तो कल है - Water is Life"</div>
+        <div class="loader-quote" data-lang="hi">"विद्याग्यान के जल योद्धाओं द्वारा निर्मित - जल संरक्षण ही हमारा संकल्प"</div>
+        
+        <div class="loader-percent" id="loaderPercent">0%</div>
+        <div class="loader-bar"><div class="loader-bar-fill" id="loaderBar"></div></div>
+        <div class="loader-quote" style="margin-top: 15px; font-size: 14px;">Powered by Vidyagyan Jal House Students</div>
+    </div>
+</div>
+
+<div class="main-content" id="mainContent">
+    <button class="lang-toggle" id="langToggle" title="हिंदी/English">🇮🇳 हिं</button>
+    <button class="dark-toggle" id="darkToggle" title="Dark/Light Mode">🌙</button>
+    <button class="back-to-top" id="backToTop" title="Back to Top">⬆️</button>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" data-page="home">💧 AquaGuard</div>
+            <ul class="nav-links" id="navLinks">
+                <li><a data-page="home" data-lang="en">Home</a><a data-page="home" data-lang="hi">मुखपृष्ठ</a></li>
+                <li><a data-page="about" data-lang="en">About</a><a data-page="about" data-lang="hi">परिचय</a></li>
+                <li><a data-page="india-projects" data-lang="en">🇮🇳 India Projects</a><a data-page="india-projects" data-lang="hi">🇮🇳 भारत परियोजनाएँ</a></li>
+                <li><a data-page="problems" data-lang="en">Water Problems</a><a data-page="problems" data-lang="hi">जल संकट</a></li>
+                <li><a data-page="solutions" data-lang="en">Solutions</a><a data-page="solutions" data-lang="hi">समाधान</a></li>
+                <li><a data-page="calculator" data-lang="en">Calculator</a><a data-page="calculator" data-lang="hi">कैलकुलेटर</a></li>
+                <li><a data-page="tips" data-lang="en">Water Tips</a><a data-page="tips" data-lang="hi">जल टिप्स</a></li>
+                <li><a data-page="faq" data-lang="en">FAQ</a><a data-page="faq" data-lang="hi">प्रश्नोत्तर</a></li>
+                <li><a data-page="contact" data-lang="en">Contact</a><a data-page="contact" data-lang="hi">संपर्क</a></li>
+            </ul>
+            <div class="menu-icon" id="menuIcon">☰</div>
+        </div>
+    </nav>
+
+    <!-- ==================== HOME PAGE - BADA VERSION ==================== -->
+    <div id="home-page" class="page">
+        <section class="hero">
+            <div>
+                <h1><span data-lang="en">Protect <span class="highlight">Water</span><br>Protect <span class="highlight">India's Future</span></span>
+                    <span data-lang="hi">जल बचाएं, <span class="highlight">भविष्य</span><br>बचाएं <span class="highlight">भारत का</span></span></h1>
+                <p data-lang="en">India is facing its worst water crisis in history. 600 million Indians face high to extreme water stress. By 2030, India's water demand will exceed supply by 50%. Join the movement to revive our rivers and secure water for every citizen.</p>
+                <p data-lang="hi">भारत अपने सबसे बड़े जल संकट का सामना कर रहा है। 60 करोड़ भारतीय गंभीर जल तनाव का सामना करते हैं। 2030 तक, भारत की जल मांग आपूर्ति से 50% अधिक हो जाएगी। हमारी नदियों को बचाने और हर नागरिक के लिए जल सुरक्षित करने के लिए इस मिशन से जुड़ें।</p>
+                <button class="btn btn-primary" data-page="india-projects" data-lang="en">Explore Namami Gange →</button>
+                <button class="btn btn-primary" data-page="india-projects" data-lang="hi">नमामि गंगे जानें →</button>
+                <button class="btn btn-outline" data-page="calculator" data-lang="en">Calculate Water Footprint</button>
+                <button class="btn btn-outline" data-page="calculator" data-lang="hi">जल फुटप्रिंट गणना करें</button>
+            </div>
+        </section>
+        
+        <div class="container">
+            <div class="cards-grid">
+                <div class="card"><i>💧</i><h3 data-lang="en">Water Scarcity Crisis</h3><h3 data-lang="hi">जल संकट</h3><p data-lang="en">21 cities including Delhi, Bengaluru, Chennai will run out of groundwater by 2030. 100 million people live in water-scarce regions. Per capita water availability dropped from 5,177 litres/day in 1951 to 1,545 litres/day in 2021.</p><p data-lang="hi">दिल्ली, बेंगलुरु, चेन्नई सहित 21 शहर 2030 तक भूजल से बाहर हो जाएंगे। 10 करोड़ लोग जल-अल्प क्षेत्रों में रहते हैं। प्रति व्यक्ति जल उपलब्धता 1951 में 5,177 लीटर/दिन से घटकर 2021 में 1,545 लीटर/दिन हो गई।</p></div>
+                <div class="card"><i>🌊</i><h3 data-lang="en">Rivers Under Threat</h3><h3 data-lang="hi">नदियाँ खतरे में</h3><p data-lang="en">60% of India's rivers are polluted. Ganga receives 3,000 million litres of untreated sewage daily. 40% of industrial waste flows into rivers without treatment. Yamuna in Delhi is 90% sewage with toxic foam.</p><p data-lang="hi">60% नदियाँ प्रदूषित। गंगा में रोज 3,000 मिलियन लीटर अनुपचारित सीवेज बहता है। 40% औद्योगिक कचरा बिना उपचार के नदियों में बहता है। दिल्ली में यमुना 90% सीवेज है जिसमें जहरीला झाग है।</p></div>
+                <div class="card"><i>🏛️</i><h3 data-lang="en">Government Action</h3><h3 data-lang="hi">सरकारी कार्रवाई</h3><p data-lang="en">₹3.6 lakh crore invested in Jal Jeevan Mission. 12.2 crore rural households now have tap water. Namami Gange: ₹20,000 crore, 374 projects, 73% complete. Atal Bhujal Yojana: ₹6,000 crore for groundwater recharge.</p><p data-lang="hi">जल जीवन मिशन में ₹3.6 लाख करोड़ निवेश। 12.2 करोड़ ग्रामीण परिवारों को नल का पानी। नमामि गंगे: ₹20,000 करोड़, 374 परियोजनाएं, 73% पूर्ण। अटल भूजल योजना: ₹6,000 करोड़ भूजल रिचार्ज के लिए।</p></div>
+            </div>
+            
+            <!-- VIDYAGYAN BOX -->
+            <div class="vidyagyan-box">
+                <h3>🌟 विद्याग्यान जल हाउस - गौरवशाली पहल 🌟</h3>
+                <p>💧 यह वेबसाइट विद्याग्यान स्कूल के <strong>जल हाउस के छात्रों</strong> द्वारा बनाई गई है 💧</p>
+                <p>🏆 जल संरक्षण हमारा संकल्प - हर बूंद कीमती है 🏆</p>
+                <p>👨‍🎓 कक्षा 6 से 12 तक के जल योद्धाओं की मेहनत 👩‍🎓</p>
+                <p>📢 "जल है तो कल है" - विद्याग्यान जल हाउस का नारा 📢</p>
+            </div>
+            
+            <!-- Detailed Stats Table -->
+            <div class="stats-table">
+                <h3 data-lang="en">🇮🇳 India's Water Crisis - Detailed Statistics</h3>
+                <h3 data-lang="hi">🇮🇳 भारत का जल संकट - विस्तृत आँकड़े</h3>
+                <div class="stat-row"><span class="stat-label" data-lang="en">People facing water stress:</span><span class="stat-label" data-lang="hi">जल तनाव का सामना करने वाले लोग:</span><span class="stat-value">600 Million (60 करोड़)</span></div>
+                <div class="stat-row"><span class="stat-label" data-lang="en">Over-exploited groundwater blocks:</span><span class="stat-label" data-lang="hi">अत्यधिक दोहन वाले भूजल ब्लॉक:</span><span class="stat-value">1,078 out of 6,584</span></div>
+                <div class="stat-row"><span class="stat-label" data-lang="en">Water table decline per year:</span><span class="stat-label" data-lang="hi">प्रति वर्ष जल स्तर गिरावट:</span><span class="stat-value">1-2 meters (Punjab, Rajasthan)</span></div>
+                <div class="stat-row"><span class="stat-label" data-lang="en">Untreated sewage into Ganga daily:</span><span class="stat-label" data-lang="hi">गंगा में रोजाना अनुपचारित सीवेज:</span><span class="stat-value">3,000 Million Litres</span></div>
+                <div class="stat-row"><span class="stat-label" data-lang="en">Child deaths from water diseases/year:</span><span class="stat-label" data-lang="hi">जल रोगों से बच्चों की मौत/वर्ष:</span><span class="stat-value">2,00,000+</span></div>
+                <div class="stat-row"><span class="stat-label" data-lang="en">Lakes lost in Bengaluru (4 decades):</span><span class="stat-label" data-lang="hi">बेंगलुरु में झीलें खत्म (4 दशक):</span><span class="stat-value">80%</span></div>
+                <div class="stat-row"><span class="stat-label" data-lang="en">Cities likely to run out of groundwater by 2030:</span><span class="stat-label" data-lang="hi">2030 तक भूजल खत्म होने वाले शहर:</span><span class="stat-value">21 (Delhi, Chennai, Bengaluru etc.)</span></div>
+                <div class="stat-row"><span class="stat-label" data-lang="en">Rural households with tap water (Jal Jeevan):</span><span class="stat-label" data-lang="hi">नल जल वाले ग्रामीण परिवार (जल जीवन):</span><span class="stat-value">12.2 Crore (62%)</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ABOUT PAGE - BADA VERSION ==================== -->
+    <div id="about-page" class="page hidden-page">
+        <section style="padding-top:120px;">
+            <div class="container">
+                <h2 class="section-title" data-lang="en">About <span class="highlight">AquaGuard</span></h2>
+                <h2 class="section-title" data-lang="hi">परिचय <span class="highlight">अक्वागार्ड</span></h2>
+                <p class="section-subtitle" data-lang="en">India's largest citizen-driven water conservation movement | Initiated by Vidyagyan Jal House Students</p>
+                <p class="section-subtitle" data-lang="hi">भारत का सबसे बड़ा जन-संचालित जल संरक्षण आंदोलन | विद्याग्यान जल हाउस के छात्रों द्वारा शुरू</p>
+                
+                <div class="cards-grid">
+                    <div class="card"><i>🎯</i><h3 data-lang="en">Our Mission</h3><h3 data-lang="hi">हमारा मिशन</h3><p data-lang="en">Educate and empower 10 crore Indians about water conservation by 2025. Create awareness through schools, colleges, and community programs. Install 1 lakh rainwater harvesting systems in rural areas.</p><p data-lang="hi">2025 तक 10 करोड़ भारतीयों को जल संरक्षण के लिए शिक्षित और सशक्त बनाना। स्कूलों, कॉलेजों और सामुदायिक कार्यक्रमों के माध्यम से जागरूकता पैदा करना। ग्रामीण क्षेत्रों में 1 लाख वर्षा जल संचयन प्रणाली स्थापित करना।</p></div>
+                    <div class="card"><i>👁️</i><h3 data-lang="en">Our Vision</h3><h3 data-lang="hi">हमारा दृष्टिकोण</h3><p data-lang="en">A water-secure India where every river flows clean, every lake is rejuvenated, every household has safe drinking water, and no child dies from waterborne diseases.</p><p data-lang="hi">एक जल-सुरक्षित भारत जहाँ हर नदी स्वच्छ बहे, हर झील का कायाकल्प हो, हर घर को सुरक्षित जल मिले, और कोई भी बच्चा जलजनित रोगों से न मरे।</p></div>
+                    <div class="card"><i>💚</i><h3 data-lang="en">Focus Areas</h3><h3 data-lang="hi">मुख्य क्षेत्र</h3><p data-lang="en">• River rejuvenation (Ganga, Yamuna, Godavari)<br>• Groundwater recharge through rainwater harvesting<br>• Lake conservation and wetland protection<br>• Reducing industrial and domestic water pollution<br>• School awareness programs</p><p data-lang="hi">• नदी कायाकल्प (गंगा, यमुना, गोदावरी)<br>• वर्षा जल संचयन के माध्यम से भूजल रिचार्ज<br>• झील संरक्षण और आर्द्रभूमि संरक्षण<br>• औद्योगिक और घरेलू जल प्रदूषण कम करना<br>• स्कूल जागरूकता कार्यक्रम</p></div>
+                </div>
+                
+                <!-- Vidyagyan Section Inside About -->
+                <div class="vidyagyan-box" style="margin-top: 50px;">
+                    <h3>🏫 विद्याग्यान जल हाउस के बारे में 🏫</h3>
+                    <p>यह वेबसाइट <strong>विद्याग्यान स्कूल के जल हाउस</strong> के छात्रों द्वारा बनाई गई है।</p>
+                    <p>हमारा उद्देश्य: जल संरक्षण के प्रति जागरूकता फैलाना और लोगों को पानी बचाने के तरीके सिखाना।</p>
+                                   </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== INDIA PROJECTS PAGE ==================== -->
+    <div id="india-projects-page" class="page hidden-page">
+        <section style="padding-top:120px;">
+            <div class="container">
+                <h2 class="section-title" data-lang="en">🇮🇳 India's <span class="highlight">Water Revolution</span></h2>
+                <h2 class="section-title" data-lang="hi">🇮🇳 भारत की <span class="highlight">जल क्रांति</span></h2>
+                <p class="section-subtitle" data-lang="en">Major government projects and their progress toward water security (2024 Update)</p>
+                <p class="section-subtitle" data-lang="hi">प्रमुख सरकारी परियोजनाएं और जल सुरक्षा की ओर उनकी प्रगति (2024 अपडेट)</p>
+                
+                <div class="india-stats">
+                    <div class="india-card"><h2 id="gangeBudget">0</h2><p data-lang="en">₹ Crore spent on Namami Gange</p><p data-lang="hi">नमामि गंगे पर खर्च (₹ करोड़)</p></div>
+                    <div class="india-card"><h2 id="jalJeevan">0</h2><p data-lang="en">Cr Households with Tap Water</p><p data-lang="hi">करोड़ घरों में नल का पानी</p></div>
+                    <div class="india-card"><h2 id="totalInvest">0</h2><p data-lang="en">₹ Lakh Crore Total Investment</p><p data-lang="hi">₹ लाख करोड़ कुल निवेश</p></div>
+                    <div class="india-card"><h2 id="sewageTreat">0</h2><p data-lang="en">MLD Sewage Treatment Added</p><p data-lang="hi">एमएलडी सीवेज उपचार जोड़ा गया</p></div>
+                </div>
+                
+                <div class="cards-grid">
+                    <div class="project-card"><i>🏞️</i><h3>Namami Gange Mission</h3><p data-lang="en">Flagship program launched June 2014 with ₹20,000 Cr budget. 374 projects sanctioned (186 STPs - 5,324 MLD). 203 projects completed (73%). Ganga dolphin population up 44% (1,272 to 1,832). BOD reduced from 8.2 to 5.4 mg/L. 48 towns ODF.</p><p data-lang="hi">प्रमुख कार्यक्रम जून 2014 में ₹20,000 करोड़ बजट के साथ शुरू हुआ। 374 परियोजनाएं स्वीकृत (186 एसटीपी - 5,324 एमएलडी)। 203 परियोजनाएं पूर्ण (73%)। गंगा डॉल्फिन संख्या 44% बढ़ी। BOD 8.2 से घटकर 5.4 mg/L। 48 शहर ODF।</p><div class="budget-bar"><div class="budget-fill" style="width:73%"></div></div></div>
+                    <div class="project-card"><i>💧</i><h3>Jal Jeevan Mission</h3><p data-lang="en">Launched 2019 with ₹3.6 Lakh Cr. Target: Tap water to 19.32 Cr rural households. 12.2 Cr covered (62%). Goa, Gujarat, Haryana, Telangana, Punjab at 100%. 1.85 Cr new tap connections added in 2023-24.</p><p data-lang="hi">2019 में ₹3.6 लाख करोड़ के साथ शुरू किया गया। लक्ष्य: 19.32 करोड़ ग्रामीण परिवारों को नल का पानी। 12.2 करोड़ कवर (62%)। गोवा, गुजरात, हरियाणा, तेलंगाना, पंजाब 100%। 2023-24 में 1.85 करोड़ नए नल कनेक्शन जोड़े गए।</p><div class="budget-bar"><div class="budget-fill" style="width:62%"></div></div></div>
+                    <div class="project-card"><i>⛲</i><h3>Atal Bhujal Yojana</h3><p data-lang="en">₹6,000 Cr World Bank aided scheme. Focus on 7 states (81 districts) with critical groundwater depletion. Target: Reduce groundwater extraction by 30% in pilot areas. 48% target achieved.</p><p data-lang="hi">₹6,000 करोड़ विश्व बैंक सहायता प्राप्त योजना। गंभीर भूजल गिरावट वाले 7 राज्यों (81 जिलों) पर फोकस। लक्ष्य: पायलट क्षेत्रों में भूजल निष्कर्षण 30% कम करना। 48% लक्ष्य प्राप्त हुआ।</p><div class="budget-bar"><div class="budget-fill" style="width:48%"></div></div></div>
+                    <div class="project-card"><i>🌾</i><h3>PMKSY - Drip Irrigation</h3><p data-lang="en">₹50,000 Cr scheme for "Har Khet Ko Pani". 70 lakh hectares covered under micro-irrigation. Subsidy: 50-80% for small farmers. Saves 50-70% water compared to flood irrigation.</p><p data-lang="hi">₹50,000 करोड़ योजना "हर खेत को पानी"। 70 लाख हेक्टेयर में सूक्ष्म सिंचाई। सब्सिडी: छोटे किसानों के लिए 50-80%। बाढ़ सिंचाई की तुलना में 50-70% पानी बचाता है।</p><div class="budget-bar"><div class="budget-fill" style="width:55%"></div></div></div>
+                    <div class="project-card"><i>🏙️</i><h3>AMRUT Mission</h3><p data-lang="en">₹77,640 Cr for 500 cities. 35 lakh tap water connections, 22 lakh sewer connections. 2,700 MLD sewage treatment capacity added. 100% sewage treatment in 100 cities target.</p><p data-lang="hi">500 शहरों के लिए ₹77,640 करोड़। 35 लाख नल कनेक्शन, 22 लाख सीवर कनेक्शन। 2,700 MLD सीवेज उपचार क्षमता जोड़ी गई। 100 शहरों में 100% सीवेज उपचार लक्ष्य।</p><div class="budget-bar"><div class="budget-fill" style="width:65%"></div></div></div>
+                    <div class="project-card"><i>🏞️</i><h3>National River Conservation Plan</h3><p data-lang="en">Covers 45 rivers in 77 towns across 20 states. 1,000+ schemes implemented. 2,500 MLD sewage treatment capacity created. 500+ ghats and crematoria renovated.</p><p data-lang="hi">20 राज्यों के 77 शहरों में 45 नदियों को कवर किया गया। 1,000+ योजनाएं लागू। 2,500 MLD सीवेज उपचार क्षमता बनाई गई। 500+ घाट और शमशान घाट का नवीनीकरण किया गया।</p><div class="budget-bar"><div class="budget-fill" style="width:58%"></div></div></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== WATER PROBLEMS PAGE ==================== -->
+    <div id="problems-page" class="page hidden-page">
+        <section style="padding-top:120px;">
+            <div class="container">
+                <h2 class="section-title" data-lang="en">India's <span class="highlight">Water Problems</span> </h2>
+                <h2 class="section-title" data-lang="hi">भारत की <span class="highlight">जल समस्याएँ</span> </h2>
+                <p class="section-subtitle" data-lang="en">Visual evidence: Groundwater depletion, river pollution & drying ecosystems across India</p>
+                <p class="section-subtitle" data-lang="hi">दृश्य साक्ष्य: भूजल गिरावट, नदी प्रदूषण और पूरे भारत में सूखते पारिस्थितिकी तंत्र</p>
+                <div id="problemGrid"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== SOLUTIONS PAGE (10 Solutions) ==================== -->
+    <div id="solutions-page" class="page hidden-page">
+        <section style="padding-top:120px;">
+            <div class="container">
+                <h2 class="section-title" data-lang="en">10 Water <span class="highlight">Conservation Solutions</span></h2>
+                <h2 class="section-title" data-lang="hi">10 जल <span class="highlight">संरक्षण समाधान</span></h2>
+                <p class="section-subtitle" data-lang="en">Proven methods that work - from ancient wisdom to modern technology</p>
+                <p class="section-subtitle" data-lang="hi">सिद्ध तरीके जो काम करते हैं - प्राचीन ज्ञान से लेकर आधुनिक तकनीक तक</p>
+                <div class="cards-grid" id="solutionGrid"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== CALCULATOR PAGE ==================== -->
+    <div id="calculator-page" class="page hidden-page">
+        <section style="padding-top:120px;">
+            <div class="container">
+                <h2 class="section-title" data-lang="en">Water Footprint <span class="highlight">Calculator</span></h2>
+                <h2 class="section-title" data-lang="hi">जल फुटप्रिंट <span class="highlight">कैलकुलेटर</span></h2>
+                <p class="section-subtitle" data-lang="en">Calculate your daily water usage and discover saving opportunities</p>
+                <p class="section-subtitle" data-lang="hi">अपने दैनिक जल उपयोग की गणना करें और बचत के अवसर खोजें</p>
+                <div class="calculator">
+                    <div class="input-group"><label data-lang="en">👨‍👩‍👧‍👦 Family members:</label><label data-lang="hi">👨‍👩‍👧‍👦 परिवार के सदस्य:</label><input type="number" id="familySize" value="4"></div>
+                    <div class="input-group"><label data-lang="en">🚿 Shower minutes per person:</label><label data-lang="hi">🚿 स्नान मिनट प्रति व्यक्ति:</label><input type="number" id="showerMins" value="10"></div>
+                    <div class="input-group"><label data-lang="en">🚽 Toilet flushes per person/day:</label><label data-lang="hi">🚽 टॉयलेट फ्लश प्रति व्यक्ति/दिन:</label><input type="number" id="flushes" value="5"></div>
+                    <div class="input-group"><label data-lang="en">👕 Laundry loads per week:</label><label data-lang="hi">👕 कपड़े धोने की लोड प्रति सप्ताह:</label><input type="number" id="laundry" value="4"></div>
+                    <div class="input-group"><label data-lang="en">🍽️ Dishwashing loads per day:</label><label data-lang="hi">🍽️ बर्तन धोने की लोड प्रति दिन:</label><input type="number" id="dishes" value="3"></div>
+                    <div class="input-group"><label data-lang="en">🌿 Gardening/Outdoor watering (litres/week):</label><label data-lang="hi">🌿 बागवानी/बाहरी पानी (लीटर/सप्ताह):</label><input type="number" id="gardening" value="200"></div>
+                    <button class="btn btn-primary" id="calculateBtn" style="width:100%" data-lang="en">Calculate My Usage</button>
+                    <button class="btn btn-primary" id="calculateBtnHi" style="width:100%" data-lang="hi">मेरा उपयोग गणना करें</button>
+                    <div class="result" id="result"><p data-lang="en">Enter your details above</p><p data-lang="hi">ऊपर अपना विवरण भरें</p></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== WATER TIPS PAGE (10 Tips) ==================== -->
+    <div id="tips-page" class="page hidden-page">
+        <section style="padding-top:120px;">
+            <div class="container">
+                <h2 class="section-title" data-lang="en">10 Powerful <span class="highlight">Water Saving Tips</span></h2>
+                <h2 class="section-title" data-lang="hi">10 शक्तिशाली <span class="highlight">जल बचत टिप्स</span></h2>
+                <p class="section-subtitle" data-lang="en">Small changes, big impact - Save water every day</p>
+                <p class="section-subtitle" data-lang="hi">छोटे बदलाव, बड़ा प्रभाव - हर दिन पानी बचाएं</p>
+                <div class="tips-grid" id="tipsGrid"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== FAQ PAGE (7 Questions) ==================== -->
+    <div id="faq-page" class="page hidden-page">
+        <section style="padding-top:120px;">
+            <div class="container">
+                <h2 class="section-title" data-lang="en">Frequently Asked <span class="highlight">Questions</span></h2>
+                <h2 class="section-title" data-lang="hi">अक्सर पूछे जाने वाले <span class="highlight">प्रश्न</span></h2>
+                <p class="section-subtitle" data-lang="en">Everything you need to know about India's water crisis</p>
+                <p class="section-subtitle" data-lang="hi">भारत के जल संकट के बारे में वह सब कुछ जो आपको जानना चाहिए</p>
+                <div class="faq-grid" id="faqGrid"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== CONTACT PAGE (Updated Email) ==================== -->
+    <div id="contact-page" class="page hidden-page">
+        <section style="padding-top:120px;">
+            <div class="container">
+                <h2 class="section-title" data-lang="en">Get In <span class="highlight">Touch</span></h2>
+                <h2 class="section-title" data-lang="hi">संपर्क <span class="highlight">करें</span></h2>
+                <p class="section-subtitle" data-lang="en">Join the movement - Volunteer, Donate, or Partner with us</p>
+                <p class="section-subtitle" data-lang="hi">आंदोलन से जुड़ें - स्वयंसेवक बनें, दान करें, या हमारे साथ साझेदारी करें</p>
+                <div class="cards-grid" style="max-width: 900px; margin: 0 auto;">
+                    <div class="card"><i>📧</i><h3 data-lang="en">Email</h3><h3 data-lang="hi">ईमेल</h3><p style="font-size: 20px; font-weight: bold;">pr7353@vidyagyan.in</p><p data-lang="en">Primary contact for water conservation queries</p><p data-lang="hi">जल संरक्षण प्रश्नों के लिए मुख्य संपर्क</p></div>
+                    <div class="card"><i>📧</i><h3 data-lang="en">Email 2</h3><h3 data-lang="hi">ईमेल 2</h3><p>as9574@vidyagyan.in</p></div>
+                    <div class="card"><i>📧</i><h3 data-lang="en">Email 3</h3><h3 data-lang="hi">ईमेल 3</h3><p>av7534@vidyagyan.in</p></div>
+                </div>
+                <div class="vidyagyan-box" style="margin-top: 50px;">
+                    <h3>💬 विद्याग्यान जल हाउस से जुड़ें 💬</h3>
+                    <p>हमें ईमेल करें:</p>
+                    <p>हमारे जल संरक्षण अभियान का हिस्सा बनें</p>
+                    <p>स्कूलों, कॉलेजों में जागरूकता कार्यक्रम आयोजित करें</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div><div class="logo">💧 AquaGuard</div><p data-lang="en">India's leading water conservation movement | Initiated by Vidyagyan Jal House Students</p><p data-lang="hi">भारत का अग्रणी जल संरक्षण आंदोलन | विद्याग्यान जल हाउस के छात्रों द्वारा शुरू</p></div>
+                <div><h4 data-lang="en">Quick Links</h4><h4 data-lang="hi">त्वरित लिंक</h4><ul class="footer-links"><li><a data-page="home">Home</a></li><li><a data-page="india-projects">India Projects</a></li><li><a data-page="calculator">Calculator</a></li><li><a data-page="tips">Tips</a></li></ul></div>
+                <div><h4 data-lang="en">Contact</h4><h4 data-lang="hi">संपर्क</h4><ul class="footer-links"><li>📧 7353@vidyagyan.in</li><li>📧 as9574@vidyagyan.in</li><li>📧 av7534@vidyagyan.in</li></ul></div>
+            </div>
+            <div class="footer-bottom" style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-light);">
+                <p>© 2024 AquaGuard | 💙 जल है तो कल है | Water is Life 💙</p>
+                <p>🌟 Developed with pride by <strong>Vidyagyan Jal House Students</strong> 🌟</p>
+                <p>🏆 "हर बूंद कीमती है - Every Drop Counts" 🏆</p>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script>
+    // LOADING SCREEN
+    (function() {
+        let percent = 0;
+        const loaderWrapper = document.getElementById('loaderWrapper');
+        const loaderPercent = document.getElementById('loaderPercent');
+        const loaderBar = document.getElementById('loaderBar');
+        const mainContent = document.getElementById('mainContent');
+        if (!loaderWrapper || !mainContent) return;
+        const interval = setInterval(function() {
+            percent += Math.floor(Math.random() * 6) + 2;
+            if (percent >= 100) { percent = 100; clearInterval(interval);
+                loaderWrapper.style.opacity = '0';
+                setTimeout(function() { loaderWrapper.style.display = 'none'; mainContent.classList.add('visible'); }, 600);
+            }
+            if (loaderPercent) loaderPercent.textContent = percent + '%';
+            if (loaderBar) loaderBar.style.width = percent + '%';
+        }, 65);
+    })();
+
+    // LANGUAGE TOGGLE
+    let isHindi = localStorage.getItem('language') === 'hi';
+    const bodyClass = document.body;
+    const langToggle = document.getElementById('langToggle');
+    
+    function setLanguage(hindi) {
+        if (hindi) {
+            bodyClass.classList.add('hindi');
+            langToggle.innerHTML = '🇮🇳 EN';
+            localStorage.setItem('language', 'hi');
+        } else {
+            bodyClass.classList.remove('hindi');
+            langToggle.innerHTML = '🇮🇳 हिं';
+            localStorage.setItem('language', 'en');
+        }
+    }
+    
+    if (isHindi) setLanguage(true);
+    langToggle.addEventListener('click', () => {
+        setLanguage(!bodyClass.classList.contains('hindi'));
+    });
+
+    // DARK MODE
+    const darkToggle = document.getElementById('darkToggle');
+    if (localStorage.getItem('darkMode') === 'enabled') { document.body.classList.add('dark'); darkToggle.innerHTML = '☀️'; }
+    darkToggle.addEventListener('click', function() {
+        document.body.classList.toggle('dark');
+        if (document.body.classList.contains('dark')) {
+            localStorage.setItem('darkMode', 'enabled');
+            darkToggle.innerHTML = '☀️';
+        } else {
+            localStorage.setItem('darkMode', 'disabled');
+            darkToggle.innerHTML = '🌙';
+        }
+    });
+
+    // Back to Top
+    const backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() { backToTop.style.display = window.scrollY > 300 ? 'block' : 'none'; });
+    backToTop.addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+    // Mobile Menu
+    const menuIcon = document.getElementById('menuIcon');
+    const navLinksMenu = document.getElementById('navLinks');
+    if (menuIcon && navLinksMenu) menuIcon.addEventListener('click', function() { navLinksMenu.classList.toggle('active'); });
+
+    // Page Navigation
+    const pages = ['home', 'about', 'india-projects', 'problems', 'solutions', 'calculator', 'tips', 'faq', 'contact'];
+    function showPage(pageId) {
+        for (let i = 0; i < pages.length; i++) { const el = document.getElementById(pages[i] + '-page'); if (el) el.classList.add('hidden-page'); }
+        const activePage = document.getElementById(pageId + '-page'); if (activePage) activePage.classList.remove('hidden-page');
+        document.querySelectorAll('[data-page]').forEach(el => el.classList.remove('active-nav'));
+        document.querySelectorAll(`[data-page="${pageId}"]`).forEach(el => el.classList.add('active-nav'));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (navLinksMenu) navLinksMenu.classList.remove('active');
+        localStorage.setItem('currentPage', pageId);
+    }
+    document.querySelectorAll('[data-page]').forEach(el => el.addEventListener('click', function(e) { const page = this.getAttribute('data-page'); if (page) showPage(page); }));
+    const savedPage = localStorage.getItem('currentPage');
+    if (savedPage && pages.includes(savedPage)) showPage(savedPage); else showPage('home');
+
+    // Animate India Stats
+    setTimeout(() => {
+        let gb = document.getElementById('gangeBudget'), val=0, target=14600;
+        let gbInt = setInterval(() => { if(val<target) { val+=200; if(gb) gb.innerText=val.toLocaleString(); } else { if(gb) gb.innerText=target.toLocaleString(); clearInterval(gbInt); } }, 20);
+        let jj = document.getElementById('jalJeevan'), v=0, t=12.2;
+        let jjInt = setInterval(() => { if(v<t) { v+=0.2; if(jj) jj.innerText=v.toFixed(1); } else { if(jj) jj.innerText='12.2'; clearInterval(jjInt); } }, 30);
+        let ti = document.getElementById('totalInvest'), x=0, tx=3.6;
+        let tiInt = setInterval(() => { if(x<tx) { x+=0.05; if(ti) ti.innerText=x.toFixed(1); } else { if(ti) ti.innerText='3.6'; clearInterval(tiInt); } }, 30);
+        let st = document.getElementById('sewageTreat'), s=0, starget=5324;
+        let stInt = setInterval(() => { if(s<starget) { s+=100; if(st) st.innerText=s.toLocaleString(); } else { if(st) st.innerText='5,324'; clearInterval(stInt); } }, 20);
+    }, 500);
+
+    // WATER PROBLEMS
+    const waterProblems = [
+        {titleEn:"🏜️ Groundwater Depletion Crisis", titleHi:"🏜️ भूजल कमी संकट", descEn:"India extracts more groundwater than US & China combined. Punjab, Rajasthan, Delhi water tables falling 1-2 meters annually. 78% wells over-exploited. NITI Aayog warns 21 cities will run out of groundwater by 2030.", descHi:"भारत अमेरिका और चीन से अधिक भूजल निकालता है। पंजाब, राजस्थान, दिल्ली में जल स्तर सालाना 1-2 मीटर गिर रहा है। 78% कुएं अत्यधिक दोहन। नीति आयोग ने चेतावनी दी है कि 2030 तक 21 शहरों का भूजल खत्म हो जाएगा।", img:"https://images.pexels.com/photos/2417366/pexels-photo-2417366.jpeg?w=800&h=500&auto=compress"},
+        {titleEn:"🌊 River Pollution (Ganga & Yamuna)", titleHi:"🌊 नदी प्रदूषण (गंगा और यमुना)", descEn:"Every day 3,000 million litres of untreated sewage flows into Ganga. Yamuna in Delhi is 90% sewage with toxic foam. Industrial effluents contain chromium, lead, mercury. BOD reduced from 8.2 to 5.4 but still critical.", descHi:"हर दिन 3,000 मिलियन लीटर अनुपचारित सीवेज गंगा में बहता है। दिल्ली में यमुना 90% सीवेज है जिसमें जहरीला झाग है। औद्योगिक अपशिष्ट में क्रोमियम, सीसा, पारा होता है। BOD 8.2 से घटकर 5.4 हुआ लेकिन फिर भी गंभीर है।", img:"https://images.pexels.com/photos/11600998/pexels-photo-11600998.jpeg?w=800&h=500&auto=compress"},
+        {titleEn:"🤒 Waterborne Diseases Epidemic", titleHi:"🤒 जलजनित रोग महामारी", descEn:"70% of India's surface water is unfit for drinking. Over 2 lakh children die annually from waterborne diseases like diarrhea, typhoid, hepatitis A, and cholera. 38 crore Indians lack access to proper sanitation.", descHi:"भारत का 70% सतही पानी पीने योग्य नहीं है। 2 लाख से अधिक बच्चे प्रतिवर्ष जलजनित रोगों से मरते हैं। 38 करोड़ भारतीयों के पास उचित स्वच्छता की सुविधा नहीं है।", img:"https://images.pexels.com/photos/4040659/pexels-photo-4040659.jpeg?w=800&h=500&auto=compress"},
+        {titleEn:"🏞️ Drying Rivers and Depleted Flows", titleHi:"🏞️ सूखती नदियाँ और घटता प्रवाह", descEn:"Ganga's dry-season flow reduced by 40% due to dams, excessive extraction, and climate change. Yamuna almost vanishes after Tajewala barrage. Godavari, Krishna, Kaveri also show reduced flows, threatening irrigation for millions.", descHi:"बांधों, अत्यधिक निष्कर्षण और जलवायु परिवर्तन के कारण गंगा का सूखा मौसम प्रवाह 40% कम हो गया। ताजेवाला बैराज के बाद यमुना लगभग गायब हो जाती है। गोदावरी, कृष्णा, कावेरी का प्रवाह भी कम हो गया है, जिससे लाखों किसानों की सिंचाई खतरे में है।", img:"https://images.pexels.com/photos/8217127/pexels-photo-8217127.jpeg?w=800&h=500&auto=compress"},
+        {titleEn:"🏙️ Vanishing Lakes (Bengaluru, Kashmir & More)", titleHi:"🏙️ लुप्त होती झीलें (बेंगलुरु, कश्मीर और अन्य)", descEn:"Bengaluru lost 80% of its lakes in 4 decades due to urbanization and sewage dumping. Dal Lake in Srinagar area reduced by 50% with water quality severely deteriorated. Wetlands across India are under threat from encroachment.", descHi:"बेंगलुरु ने शहरीकरण और सीवेज डंपिंग के कारण 4 दशकों में अपनी 80% झीलें खो दीं। श्रीनगर में डल झील का क्षेत्रफल 50% कम हो गया और पानी की गुणवत्ता गंभीर रूप से खराब हो गई। पूरे भारत में आर्द्रभूमि अतिक्रमण से खतरे में है।", img:"https://images.pexels.com/photos/580617/pexels-photo-580617.jpeg?w=800&h=500&auto=compress"}
+    ];
+    
+    const problemGrid = document.getElementById('problemGrid');
+    if(problemGrid) {
+        problemGrid.innerHTML = waterProblems.map(p => `
+            <div class="problem-card">
+                <div class="problem-img-wrapper"><img class="problem-img" src="${p.img}" loading="lazy" onerror="this.src='https://picsum.photos/id/104/800/500'"></div>
+                <div class="problem-content">
+                    <h3><span data-lang="en">${p.titleEn}</span><span data-lang="hi">${p.titleHi}</span></h3>
+                    <p><span data-lang="en">${p.descEn}</span><span data-lang="hi">${p.descHi}</span></p>
+                    <div class="solution-badge">💡 <span data-lang="en">Solutions</span><span data-lang="hi">समाधान</span></div>
+                    <ul class="solution-list">
+                        <li><span data-lang="en">Rainwater harvesting & artificial recharge</span><span data-lang="hi">वर्षा जल संचयन और कृत्रिम रिचार्ज</span></li>
+                        <li><span data-lang="en">Sewage treatment plants (STPs) at community level</span><span data-lang="hi">समुदाय स्तर पर सीवेज उपचार संयंत्र (STP)</span></li>
+                        <li><span data-lang="en">River cleaning drives & afforestation along banks</span><span data-lang="hi">नदी सफाई अभियान और किनारों पर वनीकरण</span></li>
+                        <li><span data-lang="en">Lake rejuvenation & wetland conservation</span><span data-lang="hi">झील कायाकल्प और आर्द्रभूमि संरक्षण</span></li>
+                        <li><span data-lang="en">Strict industrial compliance with Zero Liquid Discharge</span><span data-lang="hi">शून्य तरल निर्वहन के साथ सख्त औद्योगिक अनुपालन</span></li>
+                    </ul>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // SOLUTIONS DATA (10 Solutions)
+    const solutionsArray = [
+        {icon:"💧", titleEn:"Rainwater Harvesting", titleHi:"वर्षा जल संचयन", descEn:"Mandatory in 19 states including Tamil Nadu, Karnataka, Delhi. Rooftop harvesting can yield 50,000 litres annually per home. Artificial recharge wells can revive falling water tables.", descHi:"तमिलनाडु, कर्नाटक, दिल्ली सहित 19 राज्यों में अनिवार्य। छत पर संचयन प्रति घर सालाना 50,000 लीटर दे सकता है। कृत्रिम रिचार्ज कुएं गिरते जल स्तर को पुनर्जीवित कर सकते हैं।"},
+        {icon:"🏭", titleEn:"Sewage Treatment Plants", titleHi:"सीवेज उपचार संयंत्र", descEn:"186 new STPs under Namami Gange adding 5,324 MLD capacity. Treated water can be reused for irrigation, industry, reducing freshwater demand by 30-40%.", descHi:"नमामि गंगे के तहत 186 नए STP 5,324 MLD क्षमता जोड़ रहे हैं। उपचारित पानी का सिंचाई, उद्योग के लिए पुन: उपयोग किया जा सकता है, जिससे ताजे पानी की मांग 30-40% कम हो जाती है।"},
+        {icon:"🚿", titleEn:"Low-flow Fixtures & Water Audits", titleHi:"कम प्रवाह वाले उपकरण और जल ऑडिट", descEn:"Install aerators (₹200), dual-flush toilets (saves 40% water). Commercial water audits can identify leaks saving up to 30% water. Subsidies available from many municipalities.", descHi:"एरेटर (₹200), दोहरे फ्लश शौचालय लगाएं (40% पानी बचाता है)। वाणिज्यिक जल ऑडिट लीक की पहचान कर सकते हैं जिससे 30% पानी की बचत होती है। कई नगर पालिकाओं से सब्सिडी उपलब्ध है।"},
+        {icon:"🌾", titleEn:"Drip & Sprinkler Irrigation", titleHi:"ड्रिप और स्प्रिंकलर सिंचाई", descEn:"Saves 50-70% water compared to flood irrigation. 70 lakh hectares covered under PMKSY. Subsidies available for farmers (up to 80% for small farmers).", descHi:"बाढ़ सिंचाई की तुलना में 50-70% पानी बचाता है। पीएमकेएसवाई के तहत 70 लाख हेक्टेयर कवर किया गया। किसानों के लिए सब्सिडी उपलब्ध है (छोटे किसानों के लिए 80% तक)।"},
+        {icon:"♻️", titleEn:"Greywater Reuse Systems", titleHi:"ग्रे वॉटर पुन: उपयोग प्रणाली", descEn:"Reuse washing machine, RO waste, bathroom water for gardening, flushing, car washing. Reduces freshwater demand by 30-40%. Simple DIY systems cost under ₹5,000.", descHi:"वॉशिंग मशीन, RO अपशिष्ट, बाथरूम के पानी का बागवानी, फ्लशिंग, कार धोने के लिए पुन: उपयोग करें। ताजे पानी की मांग 30-40% कम करता है। सरल DIY सिस्टम ₹5,000 से कम में।"},
+        {icon:"📱", titleEn:"Smart Water Meters & IoT", titleHi:"स्मार्ट जल मीटर और IoT", descEn:"Delhi Jal Board installing 2 lakh smart meters. Real-time leak detection, usage monitoring, automated billing. Reduces non-revenue water by 25%. Saves 15,000 crore litres annually.", descHi:"दिल्ली जल बोर्ड 2 लाख स्मार्ट मीटर लगा रहा है। वास्तविक समय में रिसाव का पता लगाना, उपयोग की निगरानी, स्वचालित बिलिंग। गैर-राजस्व जल को 25% कम करता है। सालाना 15,000 करोड़ लीटर बचाता है।"},
+        {icon:"🌿", titleEn:"Phytoremediation (Floating Wetlands)", titleHi:"फाइटोरेमेडिएशन (फ्लोटिंग वेटलैंड्स)", descEn:"Using plants like water hyacinth, cattails, duckweed to naturally filter pollutants. Cost-effective, eco-friendly river rejuvenation method. Can reduce BOD by 40-60%.", descHi:"जलकुंभी, कैटेल, डकवीड जैसे पौधों का उपयोग करके प्राकृतिक रूप से प्रदूषकों को फ़िल्टर करना। लागत प्रभावी, पर्यावरण के अनुकूल नदी कायाकल्प विधि। BOD को 40-60% तक कम कर सकता है।"},
+        {icon:"🏘️", titleEn:"Community Rainwater Parks", titleHi:"सामुदायिक वर्षा जल पार्क", descEn:"Bengaluru model: Converting abandoned quarries into rainwater harvesting structures. Recharges groundwater for entire neighbourhood. 50+ such parks planned across India.", descHi:"बेंगलुरु मॉडल: परित्यक्त खदानों को वर्षा जल संचयन संरचनाओं में परिवर्तित करना। पूरे पड़ोस के लिए भूजल रिचार्ज। पूरे भारत में 50+ ऐसे पार्कों की योजना।"},
+        {icon:"🧪", titleEn:"Industrial Effluent Treatment", titleHi:"औद्योगिक अपशिष्ट उपचार", descEn:"Zero Liquid Discharge (ZLD) mandatory for 1,285 polluting industries. 1,219 now compliant. Real-time monitoring installed in 1,052 industries. Reduces heavy metal contamination.", descHi:"1,285 प्रदूषणकारी उद्योगों के लिए शून्य तरल निर्वहन (ZLD) अनिवार्य। 1,219 अब अनुपालन कर रहे हैं। 1,052 उद्योगों में वास्तविक समय की निगरानी स्थापित की गई। भारी धातु संदूषण कम करता है।"},
+        {icon:"🏫", titleEn:"School Water Clubs & Awareness", titleHi:"स्कूल जल क्लब और जागरूकता", descEn:"Vidyagyan Jal House initiative! Educating next generation about water conservation. Students lead campaigns, install RWH systems, conduct water audits in their communities. 50+ active water clubs across India.", descHi:"विद्याग्यान जल हाउस पहल! जल संरक्षण के बारे में अगली पीढ़ी को शिक्षित करना। छात्र अभियानों का नेतृत्व करते हैं, RWH सिस्टम स्थापित करते हैं, अपने समुदायों में जल ऑडिट करते हैं। पूरे भारत में 50+ सक्रिय जल क्लब।"}
+    ];
+    
+    const solutionGrid = document.getElementById('solutionGrid');
+    if(solutionGrid) {
+        solutionGrid.innerHTML = solutionsArray.map(s => `
+            <div class="card"><i>${s.icon}</i>
+                <h3><span data-lang="en">${s.titleEn}</span><span data-lang="hi">${s.titleHi}</span></h3>
+                <p><span data-lang="en">${s.descEn}</span><span data-lang="hi">${s.descHi}</span></p>
+            </div>
+        `).join('');
+    }
+
+    // TIPS DATA (10 Tips)
+    const tipsArray = [
+        {icon:"🚿", titleEn:"Navy Shower Method", titleHi:"नेवी शावर विधि", descEn:"Turn off water while soaping. Saves 20 gallons (75 litres) per shower. 4 family members = 300 litres saved daily. 1.09 lakh litres saved annually per family!", descHi:"साबुन लगाते समय पानी बंद करें। प्रति शावर 75 लीटर बचाता है। 4 परिवार के सदस्य = रोज 300 लीटर बचत। प्रति परिवार सालाना 1.09 लाख लीटर बचत!"},
+        {icon:"🚽", titleEn:"Fix Leaks Immediately", titleHi:"लीक तुरंत ठीक करें", descEn:"A leaking toilet wastes 200 gallons (750 litres) per day. Put food colour in tank - if colour appears without flushing, you have a leak. 22,500 litres wasted monthly from one leak!", descHi:"एक लीक टॉयलेट रोज 750 लीटर बर्बाद करता है। टैंक में फूड कलर डालें - अगर बिना फ्लश के रंग आता है, तो लीक है। एक लीक से मासिक 22,500 लीटर बर्बाद!"},
+        {icon:"💧", titleEn:"Reuse RO Waste Water", titleHi:"RO अपशिष्ट पानी पुन: उपयोग", descEn:"RO purifier wastes 3 litres for every 1 litre purified. Collect that water - use for mopping, cleaning, watering plants. 4 member family saves 400-600 litres monthly.", descHi:"RO प्यूरीफायर हर 1 लीटर शुद्ध पानी के लिए 3 लीटर बर्बाद करता है। उस पानी को इकट्ठा करें - पोछा लगाने, सफाई, पौधों में पानी देने के लिए उपयोग करें। 4 सदस्यीय परिवार मासिक 400-600 लीटर बचाता है।"},
+        {icon:"🌿", titleEn:"Water Plants at Dawn", titleHi:"सुबह पौधों को पानी दें", descEn:"Morning watering (before 8 AM) reduces evaporation by 50%. Use drip irrigation or soaker hoses for gardens. Water deeply but less frequently for stronger roots.", descHi:"सुबह पानी देना (सुबह 8 बजे से पहले) वाष्पीकरण 50% कम करता है। बगीचों के लिए ड्रिप सिंचाई या सोखर होज़ का उपयोग करें। मजबूत जड़ों के लिए गहरा लेकिन कम बार पानी दें।"},
+        {icon:"🧹", titleEn:"Sweep, Don't Hose", titleHi:"पोछा लगाएं, पाइप नहीं", descEn:"Use broom and dustpan instead of hose to clean driveways, patios, sidewalks. Saves 200 litres each time. Use bucket and cloth for car washing - saves 300 litres per wash.", descHi:"ड्राइववे, आंगन, फुटपाथ साफ करने के लिए पाइप के बजाय झाड़ू और डस्टपैन का उपयोग करें। हर बार 200 लीटर बचाता है। कार धोने के लिए बाल्टी और कपड़े का उपयोग करें - प्रति धुलाई 300 लीटर बचाता है।"},
+        {icon:"🚰", titleEn:"Keep Water Jug in Fridge", titleHi:"फ्रिज में पानी का जग रखें", descEn:"Instead of running tap for cold water, keep a pitcher/jug in refrigerator. Saves 30-50 litres per week. Also reduces waiting time and frustration.", descHi:"ठंडे पानी के लिए नल चलाने के बजाय, फ्रिज में एक जग रखें। प्रति सप्ताह 30-50 लीटर बचाता है। प्रतीक्षा समय और निराशा भी कम करता है।"},
+        {icon:"👕", titleEn:"Full Loads Only Method", titleHi:"पूर्ण लोड ही चलाएं", descEn:"Run washing machine and dishwasher only when fully loaded. Each partial load wastes 15-30 litres. Front-load washers vs top-load saves 30 litres/load. Air dry dishes instead of heat dry.", descHi:"वॉशिंग मशीन और डिशवॉशर तभी चलाएं जब पूरी तरह भरा हो। प्रत्येक आंशिक लोड 15-30 लीटर बर्बाद करता है। फ्रंट-लोड बनाम टॉप-लोड वॉशर 30 लीटर/लोड बचाता है। हीट ड्राई के बजाय बर्तनों को हवा में सुखाएं।"},
+        {icon:"🍽️", titleEn:"Skip Pre-Rinse for Dishes", titleHi:"बर्तनों को पहले से न धोएं", descEn:"Scrape food off dishes instead of pre-rinsing before putting in dishwasher. Saves 20 litres per load. Modern dishwashers are designed to handle food residue easily.", descHi:"डिशवॉशर में रखने से पहले प्री-रिंसिंग के बजाय भोजन को खुरच कर हटा दें। प्रति लोड 20 लीटर बचाता है। आधुनिक डिशवॉशर भोजन के अवशेषों को आसानी से संभालने के लिए डिज़ाइन किए गए हैं।"},
+        {icon:"🧴", titleEn:"Use Pool Cover", titleHi:"पूल कवर का उपयोग करें", descEn:"Use pool cover to reduce evaporation by 90%. Saves thousands of litres monthly. Also keeps pool cleaner, reduces chemical usage, and extends swim season.", descHi:"वाष्पीकरण को 90% कम करने के लिए पूल कवर का उपयोग करें। मासिक हजारों लीटर बचाता है। पूल को साफ भी रखता है, रासायनिक उपयोग कम करता है, और तैराकी सीजन बढ़ाता है।"},
+        {icon:"🚗", titleEn:"Bucket Wash Car", titleHi:"बाल्टी से कार धोएं", descEn:"Use bucket and sponge instead of hose. Saves 300 litres per wash. Use biodegradable soap and wash on lawn to water grass simultaneously. 2 cars washed monthly = 7,200 litres saved annually!", descHi:"पाइप के बजाय बाल्टी और स्पंज का उपयोग करें। प्रति धुलाई 300 लीटर बचाता है। बायोडिग्रेडेबल साबुन का उपयोग करें और एक साथ घास को पानी देने के लिए लॉन पर धोएं। मासिक 2 कार धोना = सालाना 7,200 लीटर बचत!"}
+    ];
+    
+    const tipsGrid = document.getElementById('tipsGrid');
+    if(tipsGrid) {
+        tipsGrid.innerHTML = tipsArray.map(t => `
+            <div class="tip-card"><i>${t.icon}</i>
+                <h3><span data-lang="en">${t.titleEn}</span><span data-lang="hi">${t.titleHi}</span></h3>
+                <p><span data-lang="en">${t.descEn}</span><span data-lang="hi">${t.descHi}</span></p>
+            </div>
+        `).join('');
+    }
+
+    // FAQ DATA (7 Questions - Detailed)
+    const faqArray = [
+        {qEn:"💧 What is Namami Gange? Budget and progress?", qHi:"💧 नमामि गंगे क्या है? बजट और प्रगति?", aEn:"Namami Gange is India's flagship river rejuvenation program launched in June 2014. Total budget: ₹20,000 Crore. 374 projects sanctioned including 186 STPs (5,324 MLD capacity). 203 projects completed (73% completion). <br><br><strong>Key achievements:</strong> Ganga dolphin population increased by 44% (from 1,272 to 1,832). BOD levels reduced from 8.2 to 5.4 mg/L (34% improvement). 48 towns along Ganga declared ODF (Open Defecation Free). 1,219 industries now compliant with Zero Liquid Discharge. 23 trash skimmers installed. 1,325 km of river front development completed.", aHi:"नमामि गंगे भारत का प्रमुख नदी कायाकल्प कार्यक्रम है जो जून 2014 में शुरू हुआ। कुल बजट: ₹20,000 करोड़। 374 परियोजनाएं स्वीकृत जिनमें 186 एसटीपी (5,324 एमएलडी क्षमता) शामिल हैं। 203 परियोजनाएं पूर्ण (73% पूर्णता)। <br><br><strong>मुख्य उपलब्धियां:</strong> गंगा डॉल्फिन संख्या 44% बढ़ी (1,272 से 1,832)। BOD स्तर 8.2 से घटकर 5.4 mg/L (34% सुधार)। गंगा के किनारे 48 शहर ODF घोषित। 1,219 उद्योग अब शून्य तरल निर्वहन के अनुपालन में। 23 ट्रैश स्किमर स्थापित। 1,325 किमी नदी फ्रंट विकास पूरा।"},
+        {qEn:"🌊 How polluted are Ganga and Yamuna today?", qHi:"🌊 गंगा और यमुना आज कितनी प्रदूषित हैं?", aEn:"<strong>Current Status:</strong> Ganga still receives 3,000 million litres of untreated sewage daily. Yamuna in Delhi stretch: 90% sewage with visible toxic foam. Industrial effluents containing chromium, lead, mercury continue to flow.<br><br><strong>Positive Changes:</strong> BOD reduced 34% from 2014 levels. Industrial compliance improved from 45% to 95%. 48 towns are now ODF. Real-time pollution monitoring installed in 1,052 industries. 186 new STPs being built. Ganga dolphin population up 44%. But still long way to go for 'Clean Ganga'.", aHi:"<strong>वर्तमान स्थिति:</strong> गंगा में अभी भी रोजाना 3,000 मिलियन लीटर अनुपचारित सीवेज बहता है। दिल्ली में यमुना: 90% सीवेज जिसमें दिखाई देने वाला जहरीला झाग है। क्रोमियम, सीसा, पारा युक्त औद्योगिक अपशिष्ट बहता रहता है।<br><br><strong>सकारात्मक बदलाव:</strong> BOD 2014 के स्तर से 34% कम हुआ। औद्योगिक अनुपालन 45% से बढ़कर 95% हुआ। 48 शहर अब ODF हैं। 1,052 उद्योगों में वास्तविक समय प्रदूषण निगरानी स्थापित। 186 नए STP बन रहे हैं। गंगा डॉल्फिन संख्या 44% बढ़ी। लेकिन 'स्वच्छ गंगा' के लिए अभी लंबा रास्ता तय करना है।"},
+        {qEn:"🏛️ What is Jal Jeevan Mission? Current status?", qHi:"🏛️ जल जीवन मिशन क्या है? वर्तमान स्थिति?", aEn:"Jal Jeevan Mission was launched in 2019 with ₹3.6 Lakh Crore budget. Target: Provide Functional Household Tap Connection (FHTC) to 19.32 Crore rural households by 2024.<br><br><strong>Current Status (2024):</strong> 12.2 Crore households covered (62% progress). Tap water coverage increased from 3.2 Cr (2019) to 12.2 Cr today. Goa, Gujarat, Haryana, Telangana, Punjab achieved 100% coverage. 1.85 Cr new tap connections added in 2023-24. Mission extended to 2028 with additional ₹60,000 Cr. Impact: Reduced waterborne diseases, saved women's time (no more walking miles for water).", aHi:"जल जीवन मिशन 2019 में ₹3.6 लाख करोड़ के बजट के साथ शुरू किया गया था। लक्ष्य: 2024 तक 19.32 करोड़ ग्रामीण परिवारों को कार्यात्मक घरेलू नल कनेक्शन (FHTC) प्रदान करना।<br><br><strong>वर्तमान स्थिति (2024):</strong> 12.2 करोड़ परिवार कवर (62% प्रगति)। नल जल कवरेज 3.2 करोड़ (2019) से बढ़कर आज 12.2 करोड़ हो गया। गोवा, गुजरात, हरियाणा, तेलंगाना, पंजाब ने 100% कवरेज हासिल किया। 2023-24 में 1.85 करोड़ नए नल कनेक्शन जोड़े गए। मिशन 2028 तक बढ़ा दिया गया। प्रभाव: जलजनित रोग कम हुए, महिलाओं का समय बचा (पानी के लिए मीलों पैदल चलना बंद)।"},
+        {qEn:"⛲ How serious is groundwater depletion in India?", qHi:"⛲ भारत में भूजल गिरावट कितनी गंभीर है?", aEn:"<strong>Extremely serious - a national crisis!</strong><br><br>• India is the world's largest groundwater extractor - more than US and China combined.<br>• 78% of wells in Punjab, Rajasthan, Delhi are over-exploited.<br>• Water table falling 1-2 meters/year in critical blocks.<br>• NITI Aayog warns that 21 cities including Delhi, Bengaluru, Chennai will run out of groundwater completely by 2030.<br>• 1,078 blocks (out of 6,584 monitored) are 'over-exploited' (critical stage).<br>• 54% of India's groundwater wells are declining.<br>• Atal Bhujal Yojana launched with ₹6,000 Cr to address this in 7 states.", aHi:"<strong>अत्यंत गंभीर - एक राष्ट्रीय संकट!</strong><br><br>• भारत दुनिया का सबसे बड़ा भूजल निकासकर्ता है - संयुक्त राज्य अमेरिका और चीन से भी अधिक।<br>• पंजाब, राजस्थान, दिल्ली में 78% कुएं अत्यधिक दोहन वाले हैं।<br>• गंभीर ब्लॉकों में जल स्तर 1-2 मीटर/वर्ष गिर रहा है।<br>• नीति आयोग ने चेतावनी दी है कि दिल्ली, बेंगलुरु, चेन्नई सहित 21 शहर 2030 तक पूरी तरह से भूजल से बाहर हो जाएंगे।<br>• निगरानी किए गए 6,584 ब्लॉकों में से 1,078 ब्लॉक 'अत्यधिक दोहन' वाले हैं।<br>• भारत के 54% भूजल कुएं घट रहे हैं।<br>• अटल भूजल योजना ₹6,000 करोड़ के साथ शुरू की गई।"},
+        {qEn:"🌾 How can farmers save water in agriculture?", qHi:"🌾 किसान कृषि में पानी कैसे बचा सकते हैं?", aEn:"Farmers consume 80% of India's water. Here are proven methods:<br><br><strong>1. Drip Irrigation:</strong> Delivers water directly to roots - saves 50-70% water. PMKSY offers 50-80% subsidy.<br><strong>2. Sprinkler Systems:</strong> Reduces evaporation - saves 40-60% water.<br><strong>3. Laser Land Levelling:</strong> Improves uniformity - saves 20-25% water.<br><strong>4. Mulching:</strong> Retains soil moisture - reduces water needs by 30%.<br><strong>5. Crop Rotation:</strong> Plant drought-resistant crops like millets instead of paddy in water-scarce areas.<br><strong>6. Micro-irrigation:</strong> 70 lakh hectares already covered. Target: 1 crore hectares by 2025.<br><strong>7. Soil Moisture Sensors:</strong> Water only when needed - saves 30% water.<br><strong>Result:</strong> Farmers in Punjab saved ₹15,000/acre annually using these methods!", aHi:"किसान भारत के 80% पानी का उपभोग करते हैं। यहाँ सिद्ध विधियाँ हैं:<br><br><strong>1. ड्रिप सिंचाई:</strong> पानी सीधे जड़ों तक पहुंचाती है - 50-70% पानी बचाती है। पीएमकेएसवाई 50-80% सब्सिडी देती है।<br><strong>2. स्प्रिंकलर प्रणाली:</strong> वाष्पीकरण कम करती है - 40-60% पानी बचाती है।<br><strong>3. लेजर भूमि समतलन:</strong> एकरूपता में सुधार - 20-25% पानी बचाता है।<br><strong>4. मल्चिंग:</strong> मिट्टी की नमी बनाए रखता है - पानी की आवश्यकता 30% कम करता है।<br><strong>5. फसल चक्र:</strong> जल-अल्प क्षेत्रों में धान के बजाय बाजरा जैसी सूखा प्रतिरोधी फसलें उगाएं।<br><strong>6. सूक्ष्म सिंचाई:</strong> 70 लाख हेक्टेयर पहले से कवर। लक्ष्य: 2025 तक 1 करोड़ हेक्टेयर।<br><strong>परिणाम:</strong> पंजाब के किसानों ने इन विधियों का उपयोग करके सालाना ₹15,000/एकड़ बचाया!"},
+        {qEn:"🏙️ What is the solution for India's lake crisis?", qHi:"🏙️ भारत की झील संकट का समाधान क्या है?", aEn:"India's lakes - from Bengaluru to Srinagar to East Africa's Lake Wamala - are disappearing:<br><br><strong>Solutions:</strong><br>1. <strong>Lake Rejuvenation:</strong> Desilting, sewage diversion, removing encroachments. Bengaluru's Ulsoor Lake model - restored at ₹16 Cr.<br>2. <strong>STPs around lakes:</strong> Treat sewage before entering lakes. 2,700 MLD capacity added under AMRUT.<br>3. <strong>Rainwater harvesting mandatory:</strong> In Bengaluru, 24,000 RWH structures installed in 10 years.<br>4. <strong>Buffer zone protection:</strong> No construction within 200m of lake boundary.<br>5. <strong>Construct recharge wells:</strong> 5,000+ recharge wells built around Jakarta's lakes - replicated in India.<br>6. <strong>Public awareness:</strong> Citizen lake adoption programs.<br><strong>Success Story:</strong> Lake Wamala (Uganda) - local communities planted 100,000 trees, restored 7 km shoreline, water levels increased!", aHi:"भारत की झीलें - बेंगलुरु से श्रीनगर से लेकर पूर्वी अफ्रीका की झील वामाला तक - गायब हो रही हैं:<br><br><strong>समाधान:</strong><br>1. <strong>झील कायाकल्प:</strong> गाद निकालना, सीवेज डायवर्जन, अतिक्रमण हटाना। बेंगलुरु का उल्सूर झील मॉडल - ₹16 करोड़ में बहाल।<br>2. <strong>झीलों के आसपास एसटीपी:</strong> झीलों में प्रवेश करने से पहले सीवेज का उपचार। एमरूट के तहत 2,700 MLD क्षमता जोड़ी गई।<br>3. <strong>वर्षा जल संचयन अनिवार्य:</strong> बेंगलुरु में, 10 वर्षों में 24,000 RWH संरचनाएं स्थापित।<br>4. <strong>बफर जोन संरक्षण:</strong> झील सीमा के 200 मीटर के भीतर कोई निर्माण नहीं।<br>5. <strong>रिचार्ज कुएं बनाएं:</strong> जकार्ता की झीलों के आसपास 5,000+ रिचार्ज कुएं बनाए गए - भारत में दोहराया गया।<br>6. <strong>जन जागरूकता:</strong> नागरिक झील गोद लेने के कार्यक्रम।<br><strong>सफलता की कहानी:</strong> झील वामाला (युगांडा) - स्थानीय समुदायों ने 100,000 पेड़ लगाए, 7 किमी तटरेखा बहाल की, जल स्तर बढ़ा!"},
+        {qEn:"🧾 What can common citizens do to save water daily?", qHi:"🧾 आम नागरिक रोजाना पानी बचाने के लिए क्या कर सकते हैं?", aEn:"<strong>10 simple actions that make a BIG difference:</strong><br><br>1. <strong>Fix leaking taps immediately</strong> - One drip/second wastes 15,000 litres/year!<br>2. <strong>Take shorter showers</strong> - Reduce from 10 to 5 mins = saves 50 litres/day.<br>3. <strong>Turn off tap while brushing teeth</strong> - Saves 20 litres/day per person.<br>4. <strong>Use bucket instead of hose to wash car</strong> - Saves 300 litres per wash.<br>5. <strong>Reuse RO waste water</strong> - For plants, mopping, cleaning = saves 400 litres/month.<br>6. <strong>Water plants at dawn or dusk</strong> - Reduces evaporation, saves 30% water.<br>7. <strong>Run washing machine only when full</strong> - Saves 15-30 litres per load.<br>8. <strong>Install low-flow aerators on taps</strong> - Costs ₹200, saves 40% water.<br>9. <strong>Collect rainwater for gardening</strong> - 1 inch rain on 1,000 sq ft roof = 600 gallons free water!<br>10. <strong>Spread awareness among neighbours</strong> - Collective action amplifies impact.<br><br><strong>Impact:</strong> If 1 crore families save just 50 litres/day = 50 crore litres saved daily = equivalent to filling 200 Olympic pools every day!", aHi:"<strong>10 सरल क्रियाएं जो बड़ा अंतर लाती हैं:</strong><br><br>1. <strong>लीक नल तुरंत ठीक करें</strong> - एक टपक/सेकंड सालाना 15,000 लीटर बर्बाद!<br>2. <strong>कम स्नान करें</strong> - 10 से घटाकर 5 मिनट = रोज 50 लीटर बचाएं।<br>3. <strong>दांत साफ करते समय नल बंद करें</strong> - प्रति व्यक्ति रोज 20 लीटर बचाता है।<br>4. <strong>कार धोने के लिए पाइप के बजाय बाल्टी का उपयोग करें</strong> - प्रति धुलाई 300 लीटर बचाता है।<br>5. <strong>RO अपशिष्ट पानी का पुन: उपयोग करें</strong> - पौधों, पोछा, सफाई के लिए = मासिक 400 लीटर बचाता है।<br>6. <strong>सुबह या शाम पौधों को पानी दें</strong> - वाष्पीकरण कम करता है, 30% पानी बचाता है।<br>7. <strong>वॉशिंग मशीन केवल पूरी भरी होने पर चलाएं</strong> - प्रति लोड 15-30 लीटर बचाता है।<br>8. <strong>नल पर कम प्रवाह वाले एरेटर लगाएं</strong> - लागत ₹200, 40% पानी बचाता है।<br>9. <strong>बागवानी के लिए वर्षा जल एकत्र करें</strong> - 1,000 वर्ग फुट छत पर 1 इंच बारिश = 600 गैलन मुफ्त पानी!<br>10. <strong>पड़ोसियों के बीच जागरूकता फैलाएं</strong> - सामूहिक कार्रवाई प्रभाव बढ़ाती है।<br><br><strong>प्रभाव:</strong> अगर 1 करोड़ परिवार सिर्फ 50 लीटर/दिन बचाते हैं = रोज 50 करोड़ लीटर बचत = हर दिन 200 ओलंपिक पूल भरने के बराबर!"}
+    ];
+    
+    const faqGrid = document.getElementById('faqGrid');
+    if(faqGrid) {
+        faqGrid.innerHTML = faqArray.map(f => `
+            <div class="faq-item"><div class="faq-question"><span data-lang="en">${f.qEn}</span><span data-lang="hi">${f.qHi}</span> <span>+</span></div>
+            <div class="faq-answer"><span data-lang="en">${f.aEn}</span><span data-lang="hi">${f.aHi}</span></div></div>
+        `).join('');
+        document.querySelectorAll('.faq-question').forEach(q => q.addEventListener('click', function() { this.parentElement.classList.toggle('active'); }));
+    }
+
+    // Calculator
+    const calculateBtn = document.getElementById('calculateBtn');
+    function updateCalc() {
+        const size = parseInt(document.getElementById('familySize').value) || 1;
+        const shower = parseInt(document.getElementById('showerMins').value) || 5;
+        const flush = parseInt(document.getElementById('flushes').value) || 4;
+        const laundry = parseInt(document.getElementById('laundry').value) || 2;
+        const dishes = parseInt(document.getElementById('dishes').value) || 3;
+        const gardening = parseInt(document.getElementById('gardening').value) || 200;
+        
+        const showerWater = shower * 2.1 * size;
+        const flushWater = flush * 1.6 * size;
+        const laundryWater = laundry * 15;
+        const dishesWater = dishes * 4;
+        const dailyGardening = gardening / 7;
+        const daily = Math.round(showerWater + flushWater + laundryWater + dishesWater + dailyGardening + (size * 10));
+        
+        let tipEn = daily > 500 ? "⚠️ Very high usage! Fix leaks, install low-flow fixtures. You can save 40% water! Average Indian household is 400-500 litres/day." : 
+                    (daily > 350 ? "📉 High usage. Try Navy shower method, reuse RO waste water, fix any leaks. You can save 30% easily!" : 
+                    (daily > 200 ? "👍 Good, but aim for under 200 litres/day. Try shorter showers and full loads only." : 
+                    "⭐ Excellent water saver! You're helping India's water security. Share tips with neighbours!"));
+        let tipHi = daily > 500 ? "⚠️ बहुत अधिक उपयोग! लीक ठीक करें, कम प्रवाह वाले उपकरण लगाएं। आप 40% पानी बचा सकते हैं! औसत भारतीय परिवार 400-500 लीटर/दिन है।" : 
+                    (daily > 350 ? "📉 उच्च उपयोग। नेवी शावर विधि आज़माएं, RO अपशिष्ट पानी का पुन: उपयोग करें, किसी भी लीक को ठीक करें। आप आसानी से 30% बचा सकते हैं!" : 
+                    (daily > 200 ? "👍 अच्छा है, लेकिन 200 लीटर/दिन से कम का लक्ष्य रखें। कम स्नान करें और पूर्ण लोड ही चलाएं।" : 
+                    "⭐ उत्कृष्ट जल बचतकर्ता! आप भारत की जल सुरक्षा में मदद कर रहे हैं। पड़ोसियों के साथ टिप्स साझा करें!"));
+        
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = `<h3>${daily} litres/day</h3>
+            <p data-lang="en">📊 Monthly: ${(daily * 30).toLocaleString()} litres | 📅 Yearly: ${(daily * 365).toLocaleString()} litres</p>
+            <p data-lang="hi">📊 मासिक: ${(daily * 30).toLocaleString()} लीटर | 📅 वार्षिक: ${(daily * 365).toLocaleString()} लीटर</p>
+            <p>💡 <span data-lang="en">${tipEn}</span><span data-lang="hi">${tipHi}</span></p>
+            <hr style="margin:15px 0; border-color:rgba(255,255,255,0.2);">
+            <p data-lang="en">🌍 Did you know? Average Indian household uses 400-500 litres/day. Saving just 50 litres/day per family saves 50 crore litres daily across India!</p>
+            <p data-lang="hi">🌍 क्या आप जानते हैं? औसत भारतीय परिवार 400-500 लीटर/दिन उपयोग करता है। प्रति परिवार सिर्फ 50 लीटर/दिन बचाने से पूरे भारत में रोज 50 करोड़ लीटर बचत होती है!</p>`;
+    }
+    if (calculateBtn) { calculateBtn.addEventListener('click', updateCalc); updateCalc(); }
+</script>
+</body>
+</html>
